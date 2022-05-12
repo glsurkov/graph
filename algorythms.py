@@ -69,11 +69,10 @@ def kosarai(g):
     return strong_components
 
 
-def floydWarshall(random_nodes, matrix, graph):
+def floydWarshall(matrix, graph):
     for k in graph:
-        for j in random_nodes:
-            for i in random_nodes:
+        for j in graph:
+            for i in graph:
                 d = matrix[(i,k)] + matrix[(k,j)]
                 if matrix[(i,j)] > d:
                     matrix[(i,j)] = d
-                    matrix[(j,i)] = d

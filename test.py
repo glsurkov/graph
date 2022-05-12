@@ -69,17 +69,19 @@ class Graph:
         return reversed_graph
 
 
-g = Graph('read.txt')
-g_undirect = g.undirect()
+g = Graph('read1.txt')
 
+
+g_undirect = g.undirect()
 weak_components = functions.findWeakComponents(g_undirect)
 biggest_weak_component = functions.findMaxWeak(weak_components)
 
 
 strong_components = algorythms.kosarai(g)
+functions.metaGraph(strong_components,g.graph)
 numberNodes = g.numberOfNodes()
+graphDistance = functions.findGraphDistance(biggest_weak_component, g_undirect)
 
-# graphDistance = functions.findGraphDistance(biggest_weak_component, g_undirect)
 
 print('Количество ребер в графе: ' + str(g.numberOfEdges()))
 print('Количество вершин в графе: ' + str(numberNodes))
@@ -88,4 +90,4 @@ print('Количество компонент слабой связности: 
 print('Доля вершин в максимальной по мощности компоненте слабой связности: ' + str(biggest_weak_component['length']/numberNodes))
 print('Количетсво компонент сильной связности: ' + str(len(strong_components)))
 print('Доля вершин в максимальной по мощности компоненте сильной связности: ' + str(functions.findMax(strong_components)/numberNodes))
-# print('Радиус графа: ' + str(graphDistance['radius']) + '   Диаметр графа: ' + str(graphDistance['diametr']))
+print('Радиус графа: ' + str(graphDistance['radius']) + '   Диаметр графа: ' + str(graphDistance['diametr']) + '   90-й процентиль: ' + str(graphDistance['percentile']))
