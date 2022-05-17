@@ -1,8 +1,8 @@
 import algorythms
-import collections
 import random
 import networkx as nx
 import matplotlib.pyplot as plt
+
 
 # Функция, находящая компоненты слабой связности(на вход подается неориентированный граф)
 def findWeakComponents(graph):
@@ -34,83 +34,77 @@ def findMax(list):
 
     return maximum
 
+def precompute(graph,random_nodes):
+    paths = dict.fromkeys(random_nodes)
+
+
+    for i in random_nodes:
+                path = algorythms.bfs2(graph,i,random_nodes)
+                paths[i] = path
+    return paths
+
 def graphDistance(random_nodes,e):
     radius = float('inf')
     diametr = -1
+
     for i in random_nodes:
         radius = min(radius,e[i])
         diametr = max(diametr,e[i])
+
     return {'radius': radius, 'diametr': diametr}
 
-
-def eccentricity(random_nodes,matrix,e):
+def eccentricity(random_nodes,paths,e):
     for i in random_nodes:
         for j in random_nodes:
-            e[i] = max(e[i],matrix[(i,j)])
+            if i != j:
+                e[i] = max(e[i],paths[i][j])
 
+def percentile(random_nodes, rasst):
 
-def percentile(random_nodes, matrix):
     distance = list()
     for i in sorted(random_nodes):
         for j in sorted(random_nodes):
-            if(i > j):
-                distance.append(matrix[(i,j)])
+            if(j > i):
+                distance.append(rasst[i][j])
     value = sorted(distance)[round((90*len(distance))/100) - 1]
+
     return value
 
 
 
-def findGraphDistance(component,graph):
-    matrix = collections.defaultdict(int)
-    e = collections.defaultdict(int)
-    edges = []
+def findGraphDistance(component, graph):
+
+    comp = dict.fromkeys(component['nodes'])
+    for i in comp:
+        comp[i] = set()
     for i in component['nodes']:
-        for j in component['nodes']:
-            if j in graph[i]:
-                edges.append([i,j])
-    random_nodes = random.sample(component['nodes'], 6)
+        for j in graph[i]:
+                comp[i].add(j)
 
+    random_nodes = random.sample(component['nodes'], 500)
+    e = dict.fromkeys(random_nodes,0)
 
-    for i in component['nodes']:
-        e[i] = 0
-        for j in component['nodes']:
-            if int(i) == int(j):
-                matrix[(i, j)] = 0
-                continue
-            for k in edges:
-                if int(i) == k[0] and int(j) == k[1]:
-                    matrix[(i, j)] = 1
-                    break
-            if matrix[(i, j)] == 0:
-                matrix[(i, j)] = float('inf')
+    rasst = precompute(comp,random_nodes)
 
+    eccentricity(random_nodes,rasst,e)
 
-    algorythms.floydWarshall(matrix,component['nodes'])
-    eccentricity(random_nodes,matrix,e)
     graph_distance = graphDistance(random_nodes,e)
-    value = percentile(random_nodes,matrix)
+    value = percentile(random_nodes,rasst)
     graph_distance['percentile'] = value
 
     return graph_distance
 
 
-def metaGraph(strong_components, graph):
+def metaGraph(colors, edges):
 
     metaGraph = nx.DiGraph()
 
-    for i in range(0,len(strong_components)):
-        for j in range(0,len(strong_components)):
-            if i != j:
-                for node1 in strong_components[i]:
-                    for node2 in strong_components[j]:
-                        if node2 in graph[node1]:
-                            metaGraph.add_edge(i,j)
-                            break
-                    if metaGraph.has_edge(i, j):
-                        break
-        if not metaGraph.has_node(i):
-            metaGraph.add_node(i)
+    for edge in edges:
+        if colors[edge[0]] != colors[edge[1]]:
+            metaGraph.add_edge(colors[edge[0]],colors[edge[1]])
 
 
-    nx.draw(metaGraph)
+    plt.figure(1,figsize = (65, 65))
+    pos = nx.random_layout(metaGraph)
+    nx.draw(metaGraph, pos = pos, node_size = 5, width = 0.2, arrowsize = 3)
     plt.show()
