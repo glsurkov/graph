@@ -130,9 +130,6 @@ print('Плотность графа: ' + str(g.density()))
 print('Количество компонент слабой связности: ' + str(len(weak_components)))
 print('Доля вершин в максимальной по мощности компоненте слабой связности: ' + str(biggest_weak_component['length']/numberNodes))
 print('Радиус графа: ' + str(graphDistance['radius']) + '   Диаметр графа: ' + str(graphDistance['diametr']) + '   90-й процентиль: ' + str(graphDistance['percentile']))
-print('Количетсво компонент сильной связности: ' + str(len(strong_components)))
-print('Доля вершин в максимальной по мощности компоненте сильной связности: ' + str(functions.findMax(strong_components)/numberNodes))
-print('Радиус графа: ' + str(graphDistance['radius']) + '   Диаметр графа: ' + str(graphDistance['diametr']) + '   90-й процентиль: ' + str(graphDistance['percentile']))
 
 
 start = time()
