@@ -137,3 +137,53 @@ def average_cluster_coefficient(graph):
     triangles /= 3
     global_cluster = global_cluster_numerator / global_cluster_denominator
     return int(triangles), average_cluster, global_cluster
+
+def nodeDegrees(graph):  # на вход неориентированный граф (?)
+    degrees = dict()
+    min = max = avg = -1
+    sum = 0
+
+    for key in graph:
+        degree = len(graph[key])
+        degrees[degree] = degrees[degree] + 1 if degree in degrees else 1
+
+        if (min == -1) or (degree < min):
+            min = degree
+        if degree > max:
+            max = degree
+        sum += degree
+
+    avg = sum / len(graph)
+    return {'degrees': degrees, 'minDegree': min, 'maxDegree': max, 'avgDegree': avg}
+
+def degreeProbability(degrees, min, max, nodes_amount):  # возвращает функцию вероятности для степени вершины
+    x = list(range(min, max + 1))
+    y = [degrees[degree] / nodes_amount if degree in degrees else 0 for degree in x]
+    return {'x': x, 'y': y}
+
+def showPlots(probabilityFunc):
+    x = probabilityFunc['x']
+    y = probabilityFunc['y']
+
+    plt.plot(x, y)
+    plt.title("probability of degree for node (linear)")
+    plt.xlabel('degree')
+    plt.ylabel('probability')
+    #plt.savefig('linear.png')
+    plt.show()
+
+    plt.bar(x, y)
+    plt.title("probability of degree for node (hist)")
+    plt.xlabel('degree')
+    plt.ylabel('probability')
+    #plt.savefig('hist.png')
+    plt.show()
+
+    plt.plot(x, y)
+    plt.title("probability of degree for node (log-log)")
+    plt.xlabel('degree')
+    plt.ylabel('probability')
+    plt.xscale('log')
+    plt.yscale('log')
+    #plt.savefig('loglog.png')
+    plt.show()

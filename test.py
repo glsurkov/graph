@@ -102,7 +102,7 @@ class Graph:
 
 
 g = Graph(filetxt + '-read.txt')
-nxg = nx.read_edgelist('read.txt')
+nxg = nx.read_edgelist('-read.txt')
 
 
 g_undirect = g.undirect()
@@ -118,7 +118,7 @@ numberNodes = g.numberOfNodes()
 graphDistance = functions.findGraphDistance(biggest_weak_component, g_undirect)
 
 
-if filename == 'web-Goodle.txt':
+if filename == 'web-Google.txt':
     strong_components = algorythms.kosarai(g)
     functions.metaGraph(strong_components['colors'], g.edges)
     print('Количество ребер ор. в графе: ' + str(g.numberOfEdges()))
@@ -146,3 +146,14 @@ print("Средний кластерный коэффициент (networkx): ",
 print("Глобальный кластерный коэффициент (networkx): ", nx.transitivity(nxg))
 end = time()
 print("Время работы решения networkx: ", end - start, "секунд")
+
+
+degreeInfo = functions.nodeDegrees(g_undirect)
+print('Минимальная степень узла в графе: ', degreeInfo['minDegree'])
+print('Максимальная степень узла в графе: ', degreeInfo['maxDegree'])
+print('Средняя степень узла в графе: ', degreeInfo['avgDegree'])
+probabilityFunc = functions.degreeProbability(degreeInfo['degrees'],
+                                              degreeInfo['minDegree'],
+                                              degreeInfo['maxDegree'],
+                                              numberNodes)
+functions.showPlots(probabilityFunc)
