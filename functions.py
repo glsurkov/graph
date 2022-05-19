@@ -3,6 +3,8 @@ import collections
 import random
 import networkx as nx
 import matplotlib.pyplot as plt
+from collections import Counter
+import math
 
 # Функция, находящая компоненты слабой связности(на вход подается неориентированный граф)
 def findWeakComponents(graph):
@@ -114,3 +116,30 @@ def metaGraph(strong_components, graph):
 
     nx.draw(metaGraph)
     plt.show()
+
+# Функция вычисляющая число треугольников, средний и глобальный кластерные коэффициенты
+def average_cluster_coefficient(graph):
+    average_cluster = 0
+    triangles = 0
+    global_cluster_numerator = 0
+    global_cluster_denominator = 0
+    for key in graph:
+        edges = 0
+        if len(graph[key]) < 2:
+            local_cluster = 0
+        else:
+            neighbour_union = Counter()
+            for v in graph[key]:
+                neighbour_union += Counter(graph[v])
+            for v in graph[key]:
+                edges += neighbour_union[v]
+            edges /= 2
+            triangles += edges
+            local_cluster = 2 * edges / (len(graph[key]) * (len(graph[key]) - 1))
+        global_cluster_numerator += local_cluster * math.comb(len(graph[key]), 2)
+        global_cluster_denominator += math.comb(len(graph[key]), 2)
+        average_cluster += local_cluster
+    average_cluster /= len(graph)
+    triangles /= 3
+    global_cluster = global_cluster_numerator / global_cluster_denominator
+    return int(triangles), average_cluster, global_cluster

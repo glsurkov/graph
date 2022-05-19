@@ -2,8 +2,8 @@ import pandas as pd
 import algorythms
 import functions
 import copy
-import collections
-import random
+import networkx as nx
+from time import time
 
 with open('web-Google.txt','r') as f:
     for i in range(1,4):
@@ -16,13 +16,12 @@ with open('read.txt','w') as f:
 # Класс для графа
 
 class Graph:
-    def __init__(self,filename):
+    def __init__(self, filename):
         df = pd.read_table(filename)
         df2 = df.drop_duplicates(subset=['# FromNodeId'])['# FromNodeId']
         df3 = df.drop_duplicates(subset=['ToNodeId'])['ToNodeId']
 
         resdf = list(set(list(df2.values) + list(df3.values)))
-
         graph = dict.fromkeys(resdf)
         for key in graph:
             graph[key] = set()
@@ -33,6 +32,7 @@ class Graph:
             graph[key].add(value)
 
         self.graph = graph
+
 
     # Число вершин
     def numberOfNodes(self):
@@ -69,7 +69,8 @@ class Graph:
         return reversed_graph
 
 
-g = Graph('read1.txt')
+g = Graph('read.txt')
+nxg = nx.read_edgelist('read.txt')
 
 
 g_undirect = g.undirect()
@@ -91,3 +92,19 @@ print('Доля вершин в максимальной по мощности �
 print('Количетсво компонент сильной связности: ' + str(len(strong_components)))
 print('Доля вершин в максимальной по мощности компоненте сильной связности: ' + str(functions.findMax(strong_components)/numberNodes))
 print('Радиус графа: ' + str(graphDistance['radius']) + '   Диаметр графа: ' + str(graphDistance['diametr']) + '   90-й процентиль: ' + str(graphDistance['percentile']))
+
+
+start = time()
+number_of_triangles, average_coefficient, global_coefficient = functions.average_cluster_coefficient(g_undirect)
+print("Число треугольников (полных  подграфов  на 3 вершинах): ", number_of_triangles)
+print("Средний кластерный коэффициент: ", average_coefficient)
+print("Глобальный кластерный коэффициент: ", global_coefficient)
+end = time()
+print("Время работы моего решения: ", end - start, "секунд")
+
+start = time()
+print("Число треугольников (networkx): ", int(sum(nx.triangles(nxg).values()) / 3))
+print("Средний кластерный коэффициент (networkx): ", nx.average_clustering(nxg))
+print("Глобальный кластерный коэффициент (networkx): ", nx.transitivity(nxg))
+end = time()
+print("Время работы решения networkx: ", end - start, "секунд")
