@@ -39,7 +39,7 @@ def precomputeLandmark(graph,k):
         paths[i] = dict()
     for i in vertices:
         level = dict.fromkeys(graph.keys(), -1)
-        bfs(graph,i,paths,level)
+        bfsLandmark(graph,i,paths,level)
         for v in level:
             if level[v] == -1:
                 paths[i][v] = float('inf')
