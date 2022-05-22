@@ -2,6 +2,8 @@ import algorythms
 import random
 import networkx as nx
 import matplotlib.pyplot as plt
+from collections import Counter
+import math
 
 
 # Функция, находящая компоненты слабой связности(на вход подается неориентированный граф)
@@ -107,4 +109,81 @@ def metaGraph(colors, edges):
     plt.figure(1,figsize = (65, 65))
     pos = nx.random_layout(metaGraph)
     nx.draw(metaGraph, pos = pos, node_size = 5, width = 0.2, arrowsize = 3)
+    plt.show()
+
+# Функция вычисляющая число треугольников, средний и глобальный кластерные коэффициенты
+def average_cluster_coefficient(graph):
+    average_cluster = 0
+    triangles = 0
+    global_cluster_numerator = 0
+    global_cluster_denominator = 0
+    for key in graph:
+        edges = 0
+        if len(graph[key]) < 2:
+            local_cluster = 0
+        else:
+            neighbour_union = Counter()
+            for v in graph[key]:
+                neighbour_union += Counter(graph[v])
+            for v in graph[key]:
+                edges += neighbour_union[v]
+            edges /= 2
+            triangles += edges
+            local_cluster = 2 * edges / (len(graph[key]) * (len(graph[key]) - 1))
+        global_cluster_numerator += local_cluster * math.comb(len(graph[key]), 2)
+        global_cluster_denominator += math.comb(len(graph[key]), 2)
+        average_cluster += local_cluster
+    average_cluster /= len(graph)
+    triangles /= 3
+    global_cluster = global_cluster_numerator / global_cluster_denominator
+    return int(triangles), average_cluster, global_cluster
+
+def nodeDegrees(graph):  # на вход неориентированный граф (?)
+    degrees = dict()
+    min = max = avg = -1
+    sum = 0
+
+    for key in graph:
+        degree = len(graph[key])
+        degrees[degree] = degrees[degree] + 1 if degree in degrees else 1
+
+        if (min == -1) or (degree < min):
+            min = degree
+        if degree > max:
+            max = degree
+        sum += degree
+
+    avg = sum / len(graph)
+    return {'degrees': degrees, 'minDegree': min, 'maxDegree': max, 'avgDegree': avg}
+
+def degreeProbability(degrees, min, max, nodes_amount):  # возвращает функцию вероятности для степени вершины
+    x = list(range(min, max + 1))
+    y = [degrees[degree] / nodes_amount if degree in degrees else 0 for degree in x]
+    return {'x': x, 'y': y}
+
+def showPlots(probabilityFunc):
+    x = probabilityFunc['x']
+    y = probabilityFunc['y']
+
+    plt.plot(x, y)
+    plt.title("probability of degree for node (linear)")
+    plt.xlabel('degree')
+    plt.ylabel('probability')
+    #plt.savefig('linear.png')
+    plt.show()
+
+    plt.bar(x, y)
+    plt.title("probability of degree for node (hist)")
+    plt.xlabel('degree')
+    plt.ylabel('probability')
+    #plt.savefig('hist.png')
+    plt.show()
+
+    plt.plot(x, y)
+    plt.title("probability of degree for node (log-log)")
+    plt.xlabel('degree')
+    plt.ylabel('probability')
+    plt.xscale('log')
+    plt.yscale('log')
+    #plt.savefig('loglog.png')
     plt.show()
