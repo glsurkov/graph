@@ -102,7 +102,7 @@ class Graph:
 
 
 g = Graph(filetxt + '-read.txt')
-nxg = nx.read_edgelist('-read.txt')
+nxg = nx.read_edgelist(filetxt + '-read.txt')
 
 
 g_undirect = g.undirect()
@@ -133,10 +133,10 @@ print('Радиус графа: ' + str(graphDistance['radius']) + '   Диам�
 
 
 start = time()
-number_of_triangles, average_coefficient, global_coefficient = functions.average_cluster_coefficient(g_undirect)
-print("Число треугольников (полных  подграфов  на 3 вершинах): ", number_of_triangles)
-print("Средний кластерный коэффициент: ", average_coefficient)
-print("Глобальный кластерный коэффициент: ", global_coefficient)
+clusterCoefficients = functions.average_cluster_coefficient(g_undirect)
+print("Число треугольников (полных  подграфов  на 3 вершинах): ", clusterCoefficients['triangles'])
+print("Средний кластерный коэффициент: ", clusterCoefficients['averageCluster'])
+print("Глобальный кластерный коэффициент: ", clusterCoefficients['globalCluster'])
 end = time()
 print("Время работы моего решения: ", end - start, "секунд")
 
@@ -157,3 +157,6 @@ probabilityFunc = functions.degreeProbability(degreeInfo['degrees'],
                                               degreeInfo['maxDegree'],
                                               numberNodes)
 functions.showPlots(probabilityFunc)
+
+functions.delete_random_nodes(g_undirect)
+functions.delete_max_degree_nodes(g_undirect)
