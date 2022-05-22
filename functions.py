@@ -7,25 +7,26 @@ import math
 
 
 # Функция, находящая компоненты слабой связности(на вход подается неориентированный граф)
-def findWeakComponents(graph):
+def findWeakComponents(graph, deleted_vertices=[]):
     level = dict.fromkeys(graph, -1)
     weak_components = []
 
     for number in level:
-        if level[number] == -1:
-            weak_components.append(algorythms.bfs(graph, number,level))
+        if level[number] == -1 and number not in deleted_vertices:
+            weak_components.append(algorythms.bfs(graph, number,level, deleted_vertices))
 
     return weak_components
 
 def findMaxWeak(list):
     maximum = -1
+    maximum_nodes = []
 
     for i in list:
         if len(i['nodes']) > maximum:
             maximum = len(i['nodes'])
             maximum_nodes = i['nodes']
 
-    return {'length': maximum, 'nodes': maximum_nodes}
+    return {'length': maximum if maximum >= 0 else 0, 'nodes': maximum_nodes}
 
 def findMax(list):
     maximum = -1
@@ -111,7 +112,7 @@ def metaGraph(colors, edges):
     nx.draw(metaGraph, pos = pos, node_size = 5, width = 0.2, arrowsize = 3)
     plt.show()
 
-# Функция вычисляющая число треугольников, средний и глобальный кластерные коэффициенты
+# Функция, вычисляющая число треугольников, средний и глобальный кластерные коэффициенты
 def average_cluster_coefficient(graph):
     average_cluster = 0
     triangles = 0
@@ -136,7 +137,7 @@ def average_cluster_coefficient(graph):
     average_cluster /= len(graph)
     triangles /= 3
     global_cluster = global_cluster_numerator / global_cluster_denominator
-    return int(triangles), average_cluster, global_cluster
+    return {'triangles': int(triangles), 'averageCluster': average_cluster, 'globalCluster': global_cluster}
 
 def nodeDegrees(graph):  # на вход неориентированный граф (?)
     degrees = dict()
@@ -187,3 +188,52 @@ def showPlots(probabilityFunc):
     plt.yscale('log')
     #plt.savefig('loglog.png')
     plt.show()
+
+# Функция, удаляющая некоторый процент узлов в графе и вычисляюща долю вершин в максимальной компоненте слабой связности
+def delete_random_nodes(graph):
+    deleted_vertices = []
+    rand_percent_number = random.randrange(101)  # генерация процента удаляемых узлов
+    number_of_vertices = len(graph)
+    deleted_vertices = random.sample(range(0, number_of_vertices),
+                                     round(number_of_vertices * rand_percent_number / 100))
+    print('Удаляется ', rand_percent_number, '% узлов: ', deleted_vertices)
+    weak_components = findWeakComponents(graph, deleted_vertices)
+    biggest_weak_component = findMaxWeak(weak_components)
+    print('Максимальная компонента слабой связности: ', biggest_weak_component['nodes'])
+    print('Доля вершин в максимальной по мощности компоненте слабой связности: ' +
+          str(biggest_weak_component['length'] / number_of_vertices))
+
+
+def get_nodes_with_max_degree(graph, max):
+    list_of_vertices = []
+    for key in graph:
+        if (len(graph[key]) == max):
+            list_of_vertices.append(key)
+    return list_of_vertices
+
+
+# Функция, возвращающая rand_number случайных вершин из списка
+def get_random_vertices_from_list(list_of_vertices, rand_number):
+    number_of_vertices = random.sample(range(0, len(list_of_vertices)), rand_number)
+    random_vertices_from_list = []
+    for i in number_of_vertices:
+        random_vertices_from_list.append(list_of_vertices[i])
+    return random_vertices_from_list
+
+
+# Функция, удаляющая некоторый процент узлов максимальной степени в графе и вычисляюща долю вершин в максимальной компоненте слабой связности
+def delete_max_degree_nodes(graph):
+    deleted_vertices = []
+    degreeInfo = nodeDegrees(graph)
+    nodes_of_max_degree = get_nodes_with_max_degree(graph, degreeInfo['maxDegree'])
+    print('Узлы максимальной степени ', nodes_of_max_degree)
+    rand_percent_number = random.randrange(101)  # генерация процента удаляемых узлов
+    number_of_vertices = len(graph)
+    deleted_vertices = get_random_vertices_from_list(nodes_of_max_degree, round(
+        len(nodes_of_max_degree) * rand_percent_number / 100))
+    print('Удаляется ', rand_percent_number, '% узлов максимальной степени: ', deleted_vertices)
+    weak_components = findWeakComponents(graph, deleted_vertices)
+    biggest_weak_component = findMaxWeak(weak_components)
+    print('Максимальная компонента слабой связности: ', biggest_weak_component['nodes'])
+    print('Доля вершин в максимальной по мощности компоненте слабой связности: ' +
+          str(biggest_weak_component['length'] / number_of_vertices))
