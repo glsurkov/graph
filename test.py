@@ -84,7 +84,7 @@ class Graph:
         undirect_graph = copy.deepcopy(self.graph)
         for key in self.graph:
             for value in self.graph[key]:
-                undirect_graph[value].add(key)
+                    undirect_graph[value].add(key)
 
         return undirect_graph
 
