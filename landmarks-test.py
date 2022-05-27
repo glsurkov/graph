@@ -7,6 +7,8 @@ import time
 
 
 # имя файла с датасэтом
+import landmarksLCA
+
 filename = input('Введите название файла( Пример: test.txt, text.csv ):  ')
 # разделитель между ребрами в файле
 separate = input('Введите разделитель в файлe (если разделитель - табуляция, то написать tab, если пробел - space):  ')
@@ -170,3 +172,17 @@ print('Время вычисления расстояния: ' + str((time.time(
 
 print('Наше расстояние: ' + str(my_path/5))
 print('Погрешность   ' + str(abs(my_path/5 - nX_path)))
+
+
+# Подсчет расстояния по Landmarks-LCA
+print()
+print("### Landmarks-LCA ###")
+start = time.time()
+my_path_LCA = 0
+for i in range(0, 5):
+    my_path_LCA = my_path_LCA + landmarksLCA.LandmarksLCA(g_undirect,int(k),start_v,end_v,type_of_landmarks)
+
+print('Время вычисления расстояния: ' + str((time.time() - start)/5))
+
+print('Наше расстояние по LCA: ' + str(my_path_LCA/5))
+print('Погрешность   ' + str(abs(my_path_LCA/5 - nX_path)))
