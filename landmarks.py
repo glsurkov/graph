@@ -1,5 +1,8 @@
 import random
+import time
 
+
+# степень вершины
 def degree(graph):
     degrees = dict.fromkeys(graph,0)
     for i in graph.keys():
@@ -7,7 +10,7 @@ def degree(graph):
     return degrees
 
 
-
+# выбирает вершины с наибольшими степенями
 def highDegree(graph, k):
     degrees = list(degree(graph).items())
     degrees.sort(reverse = True,key=lambda i: i[1])
@@ -17,7 +20,7 @@ def highDegree(graph, k):
 
     return value
 
-
+# вершины с наилучшим покрытием
 def bestCoverage(graph,k,M):
     paths = []
     keys = list(graph.keys())
@@ -54,12 +57,16 @@ def bestCoverage(graph,k,M):
 
     return landmarks
 
+
+# рандомные вершины
 def randomLandmarks(graph, k):
     vertices = list(graph.keys())
     random_v = random.choices(vertices, k = k)
 
     return random_v
 
+
+# бфс для налиучшего покрытия
 def bfsBestCoverage(graph,s):
     unvisited = dict.fromkeys(graph.keys(), -1)
     father = dict.fromkeys(graph.keys(), None)
@@ -81,6 +88,8 @@ def bfsBestCoverage(graph,s):
                         v = father[v]
                     return path
 
+
+# бфс для Landmarks-basic
 def bfsLandmark(graph, i, paths, level):
     paths[i][i] = 0
     level[i] = 0
@@ -93,6 +102,8 @@ def bfsLandmark(graph, i, paths, level):
                 level[w] = level[v] + 1
                 paths[i][w] = level[w]
 
+
+# предвычислении расстояний между вершинами графа и landmarks
 def precomputeLandmark(graph,k,type):
     if type == 'degree':
         vertices = highDegree(graph,k)
@@ -101,6 +112,8 @@ def precomputeLandmark(graph,k,type):
         vertices = bestCoverage(graph,k,M)
     else:
         vertices = randomLandmarks(graph,k)
+
+
     paths = dict.fromkeys(vertices)
     for i in paths:
         paths[i] = dict()
@@ -114,6 +127,7 @@ def precomputeLandmark(graph,k,type):
     return paths
 
 
+# базовый алгос
 def landmarksBasic(graph,k,s,t,type):
     paths = precomputeLandmark(graph,k,type)
     d = float('inf')
