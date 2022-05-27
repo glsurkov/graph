@@ -89,8 +89,8 @@ class Graph:
         return length
 
     # Плотность
-    def density(self):
-        return self.numberOfEdges()/((self.numberOfNodes()*(self.numberOfNodes() - 1))/2)
+    def density(self, edges):
+        return 2*edges/((self.numberOfNodes()*(self.numberOfNodes() - 1)))
 
     # Неориентированный
     def undirect(self):
@@ -150,7 +150,7 @@ nxg2 = nxg.to_undirected()
 print('Количество ребет networkX в неор.графе: ' + str(nx.number_of_edges(nxg2)))
 print('Количество вершин в графе: ' + str(numberNodes))
 print('Количество вершин в графе networkX: ' + str(nx.number_of_nodes(nxg2)))
-print('Плотность графа: ' + str(g.density()))
+print('Плотность графа: ' + str(g.density(length)))
 print('Плотность графа networkX: ' + str(nx.density(nxg2)))
 print('Количество компонент слабой связности: ' + str(len(weak_components)))
 print('Количество компонент слабой связности networkX: ' + str(nx.number_connected_components(nxg2)))
