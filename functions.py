@@ -5,6 +5,19 @@ import matplotlib.pyplot as plt
 from collections import Counter
 import math
 
+def lengths(graph):
+    k = 0
+    length = 0
+    for key in graph:
+        if key in graph[key]:
+            k = k + 1
+            length = length + len(graph[key]) - 1
+        else:
+            length = length + len(graph[key])
+
+    return length//2 + k
+
+
 
 # Функция, находящая компоненты слабой связности(на вход подается неориентированный граф)
 def findWeakComponents(graph, deleted_vertices=[]):

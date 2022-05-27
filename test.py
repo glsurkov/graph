@@ -27,6 +27,8 @@ filetxt = filename[:-4]
 with open(filetxt + '-read.txt','w') as f:
     f.write(text)
 
+
+
 # Класс для графа
 
 class Graph:
@@ -96,7 +98,6 @@ class Graph:
         for key in self.graph:
             for value in self.graph[key]:
                     undirect_graph[value].add(key)
-
         return undirect_graph
 
     def reverse(self):
@@ -113,63 +114,77 @@ class Graph:
 
 
 g = Graph(filetxt + '-read.txt')
-nxg = nx.read_edgelist(filetxt + '-read.txt')
 
-print(g.numberOfNodes())
-print(g.numberOfEdges())
+with open(filetxt + '-read.txt','r') as f:
+    f.readline()
+    text = f.read()
 
-# g_undirect = g.undirect()
-#
-# length = 0
-# for key in g_undirect:
-#     length = length + len(g_undirect[key])
-#
-# weak_components = functions.findWeakComponents(g_undirect)
-# biggest_weak_component = functions.findMaxWeak(weak_components)
-#
-# numberNodes = g.numberOfNodes()
-# graphDistance = functions.findGraphDistance(biggest_weak_component, g_undirect)
-#
-#
-# if type_or == 'directed':
-#     strong_components = algorythms.kosarai(g)
-#     functions.metaGraph(strong_components['colors'], g.edges)
-#     print('Количество ребер ор. в графе: ' + str(g.numberOfEdges()))
-#     print('Количетсво компонент сильной связности: ' + str(len(strong_components['strong_comp'])))
-#     print('Доля вершин в максимальной по мощности компоненте сильной связности: ' + str(functions.findMax(strong_components['strong_comp']) / numberNodes))
-# print('Количество ребет в неор. графe: ' + str(length//2))
-# print('Количество вершин в графе: ' + str(numberNodes))
-# print('Плотность графа: ' + str(g.density()))
-# print('Количество компонент слабой связности: ' + str(len(weak_components)))
-# print('Доля вершин в максимальной по мощности компоненте слабой связности: ' + str(biggest_weak_component['length']/numberNodes))
-# print('Радиус графа: ' + str(graphDistance['radius']) + '   Диаметр графа: ' + str(graphDistance['diametr']) + '   90-й процентиль: ' + str(graphDistance['percentile']))
-#
-#
-# start = time()
-# clusterCoefficients = functions.average_cluster_coefficient(g_undirect)
-# print("Число треугольников (полных  подграфов  на 3 вершинах): ", clusterCoefficients['triangles'])
-# print("Средний кластерный коэффициент: ", clusterCoefficients['averageCluster'])
-# print("Глобальный кластерный коэффициент: ", clusterCoefficients['globalCluster'])
-# end = time()
-# print("Время работы моего решения: ", end - start, "секунд")
-#
-# start = time()
-# print("Число треугольников (networkx): ", int(sum(nx.triangles(nxg).values()) / 3))
-# print("Средний кластерный коэффициент (networkx): ", nx.average_clustering(nxg))
-# print("Глобальный кластерный коэффициент (networkx): ", nx.transitivity(nxg))
-# end = time()
-# print("Время работы решения networkx: ", end - start, "секунд")
-#
-#
-# degreeInfo = functions.nodeDegrees(g_undirect)
-# print('Минимальная степень узла в графе: ', degreeInfo['minDegree'])
-# print('Максимальная степень узла в графе: ', degreeInfo['maxDegree'])
-# print('Средняя степень узла в графе: ', degreeInfo['avgDegree'])
-# probabilityFunc = functions.degreeProbability(degreeInfo['degrees'],
-#                                               degreeInfo['minDegree'],
-#                                               degreeInfo['maxDegree'],
-#                                               numberNodes)
-# functions.showPlots(probabilityFunc)
-#
-# functions.delete_random_nodes(g_undirect)
-# functions.delete_max_degree_nodes(g_undirect)
+with open(filetxt + '-read.txt','w') as f:
+    f.write(text)
+
+if type_or == 'directed':
+    nxg = nx.read_edgelist(filetxt + '-read.txt', create_using=nx.DiGraph)
+else:
+    nxg = nx.read_edgelist(filetxt + '-read.txt')
+
+g_undirect = g.undirect()
+
+length = functions.lengths(g_undirect)
+
+weak_components = functions.findWeakComponents(g_undirect)
+biggest_weak_component = functions.findMaxWeak(weak_components)
+numberNodes = g.numberOfNodes()
+graphDistance = functions.findGraphDistance(biggest_weak_component, g_undirect)
+
+
+if type_or == 'directed':
+    print('Количество ребер ор. в графе: ' + str(g.numberOfEdges()))
+    print('Количество ребер networkX в ор. графе: ' + str(nx.number_of_edges(nxg)))
+    strong_components = algorythms.kosarai(g)
+    print('Количество компонент сильной связности: ' + str(len(strong_components['strong_comp'])))
+    print('networkX кол-во компонент сильной связности: ' + str(nx.number_strongly_connected_components(nxg)))
+    functions.metaGraph(strong_components['colors'], g.edges)
+    print('Доля вершин в максимальной по мощности компоненте сильной связности: ' + str(functions.findMax(strong_components['strong_comp']) / numberNodes))
+print('Количество ребет в неор. графe: ' + str(length))
+nxg2 = nxg.to_undirected()
+print('Количество ребет networkX в неор.графе: ' + str(nx.number_of_edges(nxg2)))
+print('Количество вершин в графе: ' + str(numberNodes))
+print('Количество вершин в графе networkX: ' + str(nx.number_of_nodes(nxg2)))
+print('Плотность графа: ' + str(g.density()))
+print('Плотность графа networkX: ' + str(nx.density(nxg2)))
+print('Количество компонент слабой связности: ' + str(len(weak_components)))
+print('Количество компонент слабой связности networkX: ' + str(nx.number_connected_components(nxg2)))
+print('Доля вершин в максимальной по мощности компоненте слабой связности: ' + str(biggest_weak_component['length']/numberNodes))
+print('Радиус графа: ' + str(graphDistance['radius']) + '   Диаметр графа: ' + str(graphDistance['diametr']) + '   90-й процентиль: ' + str(graphDistance['percentile']))
+
+
+
+
+start = time()
+clusterCoefficients = functions.average_cluster_coefficient(g_undirect)
+print("Число треугольников (полных  подграфов  на 3 вершинах): ", clusterCoefficients['triangles'])
+print("Средний кластерный коэффициент: ", clusterCoefficients['averageCluster'])
+print("Глобальный кластерный коэффициент: ", clusterCoefficients['globalCluster'])
+end = time()
+print("Время работы моего решения: ", end - start, "секунд")
+
+start = time()
+print("Число треугольников (networkx): ", int(sum(nx.triangles(nxg).values()) / 3))
+print("Средний кластерный коэффициент (networkx): ", nx.average_clustering(nxg))
+print("Глобальный кластерный коэффициент (networkx): ", nx.transitivity(nxg))
+end = time()
+print("Время работы решения networkx: ", end - start, "секунд")
+
+
+degreeInfo = functions.nodeDegrees(g_undirect)
+print('Минимальная степень узла в графе: ', degreeInfo['minDegree'])
+print('Максимальная степень узла в графе: ', degreeInfo['maxDegree'])
+print('Средняя степень узла в графе: ', degreeInfo['avgDegree'])
+probabilityFunc = functions.degreeProbability(degreeInfo['degrees'],
+                                              degreeInfo['minDegree'],
+                                              degreeInfo['maxDegree'],
+                                              numberNodes)
+functions.showPlots(probabilityFunc)
+
+functions.delete_random_nodes(g_undirect)
+functions.delete_max_degree_nodes(g_undirect)
