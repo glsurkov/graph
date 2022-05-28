@@ -1,15 +1,17 @@
 import landmarks
+import collections
 
 
 # бфс, строящий дерево кратчайших путей
 def bfsLandmarkSPT(graph, i, level):
     SPT = dict({i: None})  # для вершины хранит предка
     level[i] = 0
-    queue = [i]
+    queue = collections.deque()
+    queue.append(i)
     while queue:
-        v = queue.pop(0)
+        v = queue.popleft()
         for w in graph[v]:
-            if level[w] == -1:
+            if w not in level:
                 queue.append(w)
                 level[w] = level[v] + 1
                 SPT[w] = v
@@ -20,6 +22,8 @@ def bfsLandmarkSPT(graph, i, level):
 def getPath(SPT, i):
     path = [i]
     current = i
+    if current not in SPT:
+        return float('inf')
     while SPT[current] is not None:
         path.insert(0, SPT[current])
         current = SPT[current]
@@ -27,15 +31,19 @@ def getPath(SPT, i):
 
 
 # вычисляет расстояние между вершинами s и t для одного landmark
-def distanceLCA(graph, landmark, s, t):
-    level = dict.fromkeys(graph.keys(), -1)
+def distanceLCA(graph, landmark, s, t, level):
     SPT = bfsLandmarkSPT(graph, landmark, level)
     level.clear()
 
     path1 = getPath(SPT, s)
+    if path1 == float('inf'):
+        return float('inf')
     path2 = getPath(SPT, t)
+    if path2 == float('inf'):
+        return float('inf')
 
     i = LCA = 0
+
     while (i < len(path1)) and (i < len(path2)):
         if path1[i] == path2[i]:
             LCA = i
@@ -57,10 +65,12 @@ def LandmarksLCA(graph, k, s, t, type):
     else:
         vertices = landmarks.randomLandmarks(graph, k)
 
-    minDist = None
+    minDist = float('inf')
+
     for v in vertices:
-        dist = distanceLCA(graph, v, s, t)
-        if (minDist is None) or (dist < minDist):
+        level = dict()
+        dist = distanceLCA(graph, v, s, t, level)
+        if dist < minDist:
             minDist = dist
 
     return minDist

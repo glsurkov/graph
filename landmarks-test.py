@@ -185,4 +185,4 @@ for i in range(0, 5):
 print('Время вычисления расстояния: ' + str((time.time() - start)/5))
 
 print('Наше расстояние по LCA: ' + str(my_path_LCA/5))
-print('Погрешность   ' + str(abs(my_path_LCA/5 - nX_path)))
+print('Погрешность   ' + str(abs(my_path_LCA - nX_path)/5))

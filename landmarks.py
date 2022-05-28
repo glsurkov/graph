@@ -1,5 +1,6 @@
 import random
 import time
+import collections
 
 
 # степень вершины
@@ -93,11 +94,12 @@ def bfsBestCoverage(graph,s):
 def bfsLandmark(graph, i, paths, level):
     paths[i][i] = 0
     level[i] = 0
-    queue = [i]
+    queue = collections.deque()
+    queue.append(i)
     while queue:
-        v = queue.pop(0)
+        v = queue.popleft()
         for w in graph[v]:
-            if level[w] == -1:
+            if w not in level:
                 queue.append(w)
                 level[w] = level[v] + 1
                 paths[i][w] = level[w]
@@ -113,17 +115,15 @@ def precomputeLandmark(graph,k,type):
     else:
         vertices = randomLandmarks(graph,k)
 
-
     paths = dict.fromkeys(vertices)
     for i in paths:
         paths[i] = dict()
+
     for i in vertices:
-        level = dict.fromkeys(graph.keys(), -1)
+        level = dict()
         bfsLandmark(graph,i,paths,level)
-        for v in level:
-            if level[v] == -1:
-                paths[i][v] = float('inf')
         level.clear()
+
     return paths
 
 
@@ -133,6 +133,10 @@ def landmarksBasic(graph,k,s,t,type):
     d = float('inf')
     if s == t:
         return 0
+
     for i in paths:
-            d = min(d,paths[i][s]+paths[i][t])
+        if s not in paths[i] or t not in paths[i]:
+            continue
+        d = min(d,paths[i][s]+paths[i][t])
+
     return d
