@@ -170,6 +170,17 @@ def nodeDegrees(graph):  # на вход неориентированный гр
     avg = sum / len(graph)
     return {'degrees': degrees, 'minDegree': min, 'maxDegree': max, 'avgDegree': avg}
 
+
+def getNodesSortedByDegree(graph):  # на вход неориентированный граф
+    nodesWithDegrees = []
+
+    for key in graph:
+        degree = len(graph[key])
+        nodesWithDegrees.append((key, degree))
+
+    return sorted(nodesWithDegrees, key=lambda tup: tup[1])
+
+
 def degreeProbability(degrees, min, max, nodes_amount):  # возвращает функцию вероятности для степени вершины
     x = list(range(min, max + 1))
     y = [degrees[degree] / nodes_amount if degree in degrees else 0 for degree in x]
