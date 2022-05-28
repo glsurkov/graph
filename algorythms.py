@@ -1,7 +1,7 @@
 import collections
 
 # Поиск в ширину первая реализация
-def bfs(graph,root,level, deleted_vertices=[]):
+def bfs(graph,root,level):
     level[root] = 0
     max_level = -1
     visited = set()
@@ -11,7 +11,7 @@ def bfs(graph,root,level, deleted_vertices=[]):
     while queue:
         vertex = queue.popleft()
         for neighbour in graph[vertex]:
-            if neighbour not in visited and neighbour not in deleted_vertices:
+            if neighbour not in visited:
                 level[neighbour] = level[vertex] + 1
                 if level[neighbour] >= max_level:
                     max_level = level[neighbour]

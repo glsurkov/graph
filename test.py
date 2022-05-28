@@ -100,9 +100,9 @@ class Graph:
         return reversed_graph
 
 
-
 g = Graph(filetxt + '-read.txt')
 nxg = nx.read_edgelist(filetxt + '-read.txt')
+# nxg = nx.from_dict_of_lists(g.graph) # for vk
 
 
 g_undirect = g.undirect()
@@ -115,6 +115,7 @@ weak_components = functions.findWeakComponents(g_undirect)
 biggest_weak_component = functions.findMaxWeak(weak_components)
 
 numberNodes = g.numberOfNodes()
+
 graphDistance = functions.findGraphDistance(biggest_weak_component, g_undirect)
 
 
@@ -131,14 +132,13 @@ print('Количество компонент слабой связности: 
 print('Доля вершин в максимальной по мощности компоненте слабой связности: ' + str(biggest_weak_component['length']/numberNodes))
 print('Радиус графа: ' + str(graphDistance['radius']) + '   Диаметр графа: ' + str(graphDistance['diametr']) + '   90-й процентиль: ' + str(graphDistance['percentile']))
 
-
 start = time()
-clusterCoefficients = functions.average_cluster_coefficient(g_undirect)
+clusterCoefficients = functions.average_cluster_coefficient(g.graph)
 print("Число треугольников (полных  подграфов  на 3 вершинах): ", clusterCoefficients['triangles'])
 print("Средний кластерный коэффициент: ", clusterCoefficients['averageCluster'])
 print("Глобальный кластерный коэффициент: ", clusterCoefficients['globalCluster'])
 end = time()
-print("Время работы моего решения: ", end - start, "секунд")
+print("Время работы реализации в проекте: ", end - start, "секунд")
 
 start = time()
 print("Число треугольников (networkx): ", int(sum(nx.triangles(nxg).values()) / 3))
@@ -148,7 +148,7 @@ end = time()
 print("Время работы решения networkx: ", end - start, "секунд")
 
 
-degreeInfo = functions.nodeDegrees(g_undirect)
+degreeInfo = functions.nodeDegrees(g.graph)
 print('Минимальная степень узла в графе: ', degreeInfo['minDegree'])
 print('Максимальная степень узла в графе: ', degreeInfo['maxDegree'])
 print('Средняя степень узла в графе: ', degreeInfo['avgDegree'])
