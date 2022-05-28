@@ -127,6 +127,20 @@ def metaGraph(colors, edges):
     nx.draw(metaGraph, pos = pos, node_size = 5, width = 0.2, arrowsize = 3)
     plt.show()
 
+def local_cluster_coefficient(graph, key):
+    edges = 0
+    if len(graph[key]) < 2:
+        local_cluster = 0
+    else:
+        neighbour_union = Counter()
+        for v in graph[key]:
+            neighbour_union += Counter(graph[v])
+        for v in graph[key]:
+            edges += neighbour_union[v]
+        edges /= 2
+        local_cluster = 2 * edges / (len(graph[key]) * (len(graph[key]) - 1))
+    return local_cluster
+
 
 # Функция, вычисляющая число треугольников, средний и глобальный кластерные коэффициенты
 def average_cluster_coefficient(graph):
