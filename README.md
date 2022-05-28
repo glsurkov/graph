@@ -1,4 +1,4 @@
-# graph
+# Project graphs
 
 Команда для запуска задания по анализу:
 # python test.py
