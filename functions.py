@@ -263,14 +263,13 @@ def get_random_vertices_from_list(list_of_vertices, rand_number):
 def delete_max_degree_nodes(graph):
     percent_list = list()
     part_list = list()
-    for i in range(0, 99, 5):
+    nodes_with_sorted_degree = [s[0] for s in getNodesSortedByDegree(graph)]
+    for i in range(1, 99, 5):
         g_copy = copy.deepcopy(graph)
-        degreeInfo = nodeDegrees(graph)
         rand_percent_number = i  # random.randrange(101)
-        nodes_with_sorted_degree = degreeInfo['sortedDegree']
-        deleted_vertices = nodes_with_sorted_degree[:-round(
-            len(graph) * rand_percent_number / 100)]
-        print('Удаляется ', rand_percent_number, '% узлов наибольшей степени', deleted_vertices)
+        deleted_vertices = nodes_with_sorted_degree[-round(
+            len(graph) * rand_percent_number / 100):]
+        print('Удаляется ', rand_percent_number, '% узлов наибольшей степени')
         for t in deleted_vertices:
             g_copy.pop(t, None)
             for key in g_copy:
@@ -279,7 +278,7 @@ def delete_max_degree_nodes(graph):
         weak_components = findWeakComponents(g_copy)
         biggest_weak_component = findMaxWeak(weak_components)
         part = biggest_weak_component['length'] / len(g_copy)
-        print("part ", part)
+        print("part ", part, " for percent ", i)
         percent_list.append(i)
         part_list.append(part)
     plt.plot(percent_list, part_list)
