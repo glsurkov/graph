@@ -19,7 +19,7 @@ k = input('Введите кол-во landmarks: ')
 format = filename[-4:]
 
 
-if format == '.txt':
+if format == '.txt' or format == '.mtx':
     with open(filename,'r') as f:
         for i in range(1,4):
             f.readline()
@@ -37,13 +37,13 @@ with open(filetxt + '-read.txt','w') as f:
 
 
 if separate != 'tab' and separate != 'space' and format != '.csv' :
-    df = pd.read_table(filename, sep=separate)
+    df = pd.read_table(filetxt + '-read.txt', sep=separate)
 elif separate == 'space':
-    df = pd.read_table(filename, sep=' ')
+    df = pd.read_table(filetxt + '-read.txt', sep=' ')
 elif separate == ',':
-    df = pd.read_table(filename, sep = ',')
+    df = pd.read_table(filetxt + '-read.txt', sep = ',')
 else:
-    df = pd.read_table(filename)
+    df = pd.read_table(filetxt + '-read.txt')
 
 
 gr = nx.Graph()
@@ -66,7 +66,7 @@ class Graph:
         else:
             df = pd.read_table(filename)
 
-        if format == '.txt':
+        if format == '.txt' or format == '.mtx':
             df2 = df.drop_duplicates(subset=['FromNodeId'])['FromNodeId']
             df3 = df.drop_duplicates(subset=['ToNodeId'])['ToNodeId']
         else:
@@ -80,7 +80,7 @@ class Graph:
         edges = []
         for key in graph:
             graph[key] = set()
-        if format == '.txt':
+        if format == '.txt' or format == '.mtx':
             for node in df.values:
                 edges.append(list(node))
                 key = node[0]
