@@ -158,7 +158,7 @@ print('Доля вершин в максимальной по мощности �
 print('Радиус графа: ' + str(graphDistance['radius']) + '   Диаметр графа: ' + str(graphDistance['diametr']) + '   90-й процентиль: ' + str(graphDistance['percentile']))
 
 start = time()
-clusterCoefficients = functions.average_cluster_coefficient(g.graph)
+clusterCoefficients = functions.average_cluster_coefficient(g_undirect)
 print("Число треугольников (полных  подграфов  на 3 вершинах): ", clusterCoefficients['triangles'])
 print("Средний кластерный коэффициент: ", clusterCoefficients['averageCluster'])
 print("Глобальный кластерный коэффициент: ", clusterCoefficients['globalCluster'])
@@ -166,14 +166,14 @@ end = time()
 print("Время работы реализации в проекте: ", end - start, "секунд")
 
 start = time()
-print("Число треугольников (networkx): ", int(sum(nx.triangles(nxg).values()) / 3))
-print("Средний кластерный коэффициент (networkx): ", nx.average_clustering(nxg))
-print("Глобальный кластерный коэффициент (networkx): ", nx.transitivity(nxg))
+print("Число треугольников (networkx): ", int(sum(nx.triangles(nxg2).values()) / 3))
+print("Средний кластерный коэффициент (networkx): ", nx.average_clustering(nxg2))
+print("Глобальный кластерный коэффициент (networkx): ", nx.transitivity(nxg2))
 end = time()
 print("Время работы решения networkx: ", end - start, "секунд")
 
 
-degreeInfo = functions.nodeDegrees(g.graph)
+degreeInfo = functions.nodeDegrees(g_undirect)
 print('Минимальная степень узла в графе: ', degreeInfo['minDegree'])
 print('Максимальная степень узла в графе: ', degreeInfo['maxDegree'])
 print('Средняя степень узла в графе: ', degreeInfo['avgDegree'])
